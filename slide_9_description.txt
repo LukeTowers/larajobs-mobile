@@ -1,0 +1,18 @@
+Title: The Question
+Layout: Title Only
+Body:
+What if my PHP class property was the frontend state?
+
+Layout Guidelines:
+- **Alignment:** Center Title.
+- **Visual Hierarchy:**
+  1.  **Title:** Massive (80pt+), bold, Livewire Pink (#F472B6). This is the pivotal moment of the talk.
+- **Background Details:**
+  - Solid Deep Slate (#0F172A).
+  - Subtle, large quotation marks in the background (opacity 5%) to frame the question.
+Design Style:
+- Background: #0F172A (Deep Slate)
+- Accent: #F472B6 (Livewire Pink)
+
+Speaker Notes:
+This is the Livewire way. I define a public property $query. I bind it to the input with wire:model.live. That’s it. I don't need an event listener. I don't need a fetch request. When the user types, Livewire automatically updates the property on the server. My PHP class is the frontend state. It's just PHP!

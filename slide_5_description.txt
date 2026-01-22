@@ -1,0 +1,21 @@
+Title: The Feature
+Layout: Title and Body
+Body:
+The Task: Build a Real-time Search.
+
+<Leave a space for this image> (Image: A high-fidelity, dark-mode mobile mockup of the LaraJobs app. It shows a list of job cards with company logos, titles, and metadata. Each job card has a clearly visible button with the text "View Job". At the top, a search bar with the text "Laravel" typed in.)
+
+Layout Guidelines:
+- **Alignment:** Left Title, Right Image (or Centered Image below Title).
+- **Visual Hierarchy:**
+  1.  **Title:** Medium-Large (40pt), white.
+  2.  **Image:** The STAR of the slide. A crisp, high-res mobile mockup (iPhone frame) showing the dark mode UI of LaraJobs. It should look professional and "native".
+- **Background Details:**
+  - Solid Deep Slate (#0F172A).
+  - Use "Livewire Pink" (#F472B6) for the "The Task" label to imply this is the goal we will achieve.
+Design Style:
+- Background: #0F172A (Deep Slate)
+- Accent: #F472B6 (Livewire Pink)
+
+Speaker Notes:
+To demonstrate this, let's look at a simple feature: A Real-time Search Bar. As you type, the results update. Simple, right? Let's look at how we've built this over the last decade.

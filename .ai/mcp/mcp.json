@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "/Users/apple/Library/Application Support/Herd/bin/php84",
+      "args": [
+        "/Users/apple/project/larajobs/artisan",
+        "boost:mcp"
+      ]
+    },
+    "herd": {
+      "command": "/Users/apple/Library/Application Support/Herd/bin/php84",
+      "args": [
+        "/Applications/Herd.app/Contents/Resources/herd-mcp.phar"
+      ],
+      "env": {
+        "SITE_PATH": "/Users/apple/project/larajobs"
+      }
+    }
+  }
+}

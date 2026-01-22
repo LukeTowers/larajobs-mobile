@@ -1,0 +1,257 @@
+<?php
+
+use Livewire\Component;
+use App\Models\JobListing;
+use App\Models\JobAlert;
+use App\Livewire\Forms\JobSearchForm;
+use Livewire\Attributes\Url;
+use Livewire\Attributes\Validate;
+use Flux\Flux;
+
+new class extends Component {
+    public JobSearchForm $search;
+    public int $limit = 2;
+
+    public function loadMore(): void
+    {
+        $this->limit += 2;
+    }
+
+    public function createAlert(): void
+    {
+        if (empty($this->search->query)
+            && empty($this->search->location)
+            && empty($this->search->salary)) {
+            return;
+        }
+
+        JobAlert::create([
+            'query' => $this->search->query,
+            'location' => $this->search->location,
+            'salary' => $this->search->salary,
+        ]);
+
+        Flux::toast('Alert created!', variant: 'success', duration: 0);
+        $this->modal('alert-modal')->close();
+    }
+
+    public function with()
+    {
+        $query = JobListing::latest('pub_date');
+
+        if ($this->search->query) {
+            $query->where(function ($q) {
+                $q->where('title', 'like', '%' . $this->search->query . '%')
+                    ->orWhere('description', 'like', '%' . $this->search->query . '%')
+                    ->orWhere('tags', 'like', '%' . $this->search->query . '%')
+                    ->orWhere('company', 'like', '%' . $this->search->query . '%');
+            });
+        }
+
+        if ($this->search->location) {
+            $query->where('location', 'like', '%' . $this->search->location . '%');
+        }
+
+        if ($this->search->salary) {
+            $query->where('salary', 'like', '%' . $this->search->salary . '%');
+        }
+
+        return [
+            'jobs' => $query->take($this->limit)->get(),
+        ];
+    }
+};
+?>
+
+<div>
+    <flux:header container="header" class="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
+        <flux:brand href="#" name="LaraJobs"/>
+
+        <flux:spacer/>
+
+        <flux:icon.bars-3/>
+    </flux:header>
+
+    <flux:main container="job-list">
+        <div class="space-y-6">
+            <flux:card class="space-y-4">
+                <div class="flex gap-2">
+                    <div class="flex-1">
+                        <flux:input
+                            wire:model.live.debounce.300ms="search.query"
+                            icon="magnifying-glass"
+                            placeholder="Search keywords..."
+                        />
+                    </div>
+
+                    <flux:modal.trigger name="alert-modal">
+                        <flux:button variant="ghost" icon="bell" class="shrink-0"/>
+                    </flux:modal.trigger>
+                </div>
+
+                <div x-data="{ expanded: false }">
+                    <button
+                        @click="expanded = ! expanded"
+                        class="flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors w-full"
+                    >
+                        <flux:icon name="adjustments-horizontal" class="size-4"/>
+                        <span>Filters</span>
+                        <flux:icon name="chevron-down" class="size-4 ml-auto transition-transform duration-200"
+                                   ::class="expanded ? 'rotate-180' : ''"/>
+                    </button>
+
+                    <div
+                        x-show="expanded"
+                        x-collapse
+                        class="grid gap-4 mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700"
+                        style="display: none;"
+                    >
+                        <flux:input
+                            wire:model.live.debounce.300ms="search.location"
+                            label="Location"
+                            placeholder="e.g. Remote, USA..."
+                            icon="map-pin"
+                        />
+                        <flux:input
+                            wire:model.live.debounce.300ms="search.salary"
+                            label="Salary"
+                            placeholder="e.g. $100k..."
+                            icon="currency-dollar"
+                        />
+                    </div>
+                </div>
+            </flux:card>
+
+            <div class="grid gap-6">
+                @forelse($jobs as $job)
+                    <flux:card class="hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-start gap-3 sm:gap-4">
+                                <div
+                                    class="size-10 sm:size-12 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0 overflow-hidden">
+                                    @if($job->company_logo && !str_ends_with($job->company_logo, '/'))
+                                        <img src="{{ $job->company_logo }}" alt="{{ $job->company }}"
+                                             class="size-full object-contain">
+                                    @else
+                                        <flux:icon name="building-office" class="size-5 sm:size-6 text-zinc-400"/>
+                                    @endif
+                                </div>
+
+                                <div class="space-y-1 w-full min-w-0">
+                                    <flux:heading size="lg" class="break-words">
+                                        <a href="{{ $job->link }}" target="_blank"
+                                           class="hover:underline decoration-zinc-400 underline-offset-4">
+                                            {{ $job->title }}
+                                        </a>
+                                    </flux:heading>
+
+                                    <div class="text-sm text-zinc-500 dark:text-zinc-400 space-y-1">
+                                        @if($job->company)
+                                            <div
+                                                class="font-medium text-zinc-800 dark:text-zinc-200">{{ $job->company }}</div>
+                                        @endif
+
+                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                                            @if($job->location)
+                                                <div class="flex items-center gap-1 shrink-0">
+                                                    <flux:icon name="map-pin" class="size-3.5"/>
+                                                    <span>{{ $job->location }}</span>
+                                                </div>
+                                            @endif
+
+                                            @if($job->salary)
+                                                <div class="flex items-center gap-1 shrink-0">
+                                                    <flux:icon name="currency-dollar" class="size-3.5"/>
+                                                    <span>{{ $job->salary }}</span>
+                                                </div>
+                                            @endif
+
+                                            <div class="flex items-center gap-1 shrink-0">
+                                                <flux:icon name="calendar" class="size-3.5"/>
+                                                <span>{{ $job->pub_date?->diffForHumans() }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <flux:text class="line-clamp-3 break-words">
+                                {!! strip_tags($job->description) !!}
+                            </flux:text>
+
+                            <div class="shrink-0 w-full">
+                                <flux:button href="{{ $job->link }}" target="_blank" variant="primary" class="w-full">
+                                    Apply Now
+                                </flux:button>
+                            </div>
+                        </div>
+                    </flux:card>
+                @empty
+                    <flux:card>
+                        <flux:text>No jobs found.</flux:text>
+                    </flux:card>
+                @endforelse
+            </div>
+
+            @if($jobs->isNotEmpty() && $jobs->count() >= $limit)
+                <div
+                    wire:intersect="loadMore"
+                    class="h-10 flex items-center justify-center text-zinc-400"
+                >
+                    <flux:icon name="arrow-path" class="size-5 animate-spin mr-2"/>
+                    Loading more...
+                </div>
+            @endif
+        </div>
+    </flux:main>
+
+    <flux:modal name="alert-modal" class="min-w-[20rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Create Job Alert</flux:heading>
+                <flux:subheading>Save your current filters to get notified about new jobs.</flux:subheading>
+            </div>
+
+            <div class="space-y-4">
+                @if($search->query)
+                    <div class="flex flex-col gap-1">
+                        <flux:label>Keywords</flux:label>
+                        <div class="text-sm font-medium">{{ $search->query }}</div>
+                    </div>
+                @endif
+
+                @if($search->location)
+                    <div class="flex flex-col gap-1">
+                        <flux:label>Location</flux:label>
+                        <div class="text-sm font-medium">{{ $search->location }}</div>
+                    </div>
+                @endif
+
+                @if($search->salary)
+                    <div class="flex flex-col gap-1">
+                        <flux:label>Salary</flux:label>
+                        <div class="text-sm font-medium">{{ $search->salary }}</div>
+                    </div>
+                @endif
+
+                @if(!$search->query && !$search->location && !$search->salary)
+                    <div class="text-sm text-red-500 dark:text-red-400">
+                        Please select at least one filter or keyword to create an alert.
+                    </div>
+                @endif
+
+                @error('alert')
+                <div class="text-sm text-red-500 dark:text-red-400">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="flex gap-2">
+                <flux:spacer/>
+                <flux:modal.close>
+                    <flux:button variant="ghost">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button variant="primary" wire:click="createAlert">Save Alert</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+</div>

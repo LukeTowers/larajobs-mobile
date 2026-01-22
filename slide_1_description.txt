@@ -1,0 +1,32 @@
+Title: ⚡️Staying Productive in PHP with Livewire
+Subtitle: Exploring the features that empower PHP developers
+Presenter: [Your Name]
+Layout Guidelines:
+- **Alignment:** Center all text vertically and horizontally on the canvas.
+- **Visual Hierarchy:**
+  1.  **Main Title:** Massive font size (72pt+), bold weight, white (#F8FAFC).
+  2.  **Subtitle:** Medium font size (32pt), lighter weight, Livewire Pink (#F472B6).
+  3.  **Presenter:** Small font size (24pt), grey (#94A3B8), anchored at the bottom center.
+- **Background Details:**
+  - Solid Deep Slate (#0F172A) background.
+  - Optional: Add a subtle, very low opacity (5-10%) large `<?php` tag or opening brace `{` in the background corner as a watermark to reinforce the "It's just PHP" theme.
+Design Style:
+- Background: #0F172A (Deep Slate)
+- Title Color: #F8FAFC (White)
+- Subtitle Color: #F472B6 (Livewire Pink)
+- Font: Inter or Roboto (Bold)
+
+Speaker Notes:
+Hi everyone. My name is Jigar Dhulla.
+
+You know what kills productivity? It's when you have a simple user story—like "Add a Search Bar"—and you find yourself creating **two** Jira tickets.
+
+One for the Backend API. One for the Frontend Component.
+
+And the funny part? They are both assigned to **you**. You are splitting your own brain in half just to ship one feature.
+
+Over the next 15 minutes, I'm going to show you how to reclaim your productivity. We are going to stop splitting our stack and build a highly interactive web app... using just PHP.
+
+I'm going to challenge that idea. I'm going to show you how we can build a highly interactive web app—complete with complex UI interactions like real-time search and infinite scroll—while staying 100% within the Laravel and Livewire ecosystem. No API routes. No complex state management. Just PHP.
+
+Before we dive in to the topic, let me introduce myself.

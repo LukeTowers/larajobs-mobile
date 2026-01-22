@@ -1,0 +1,21 @@
+Title: The Old State Problem
+Layout: Visual Metaphor
+Body:
+Two sources of truth = Two problems.
+
+(Image: A split screen visual. On the left, a "Server" database icon. On the right, a "Browser" JavaScript icon. In the middle, a tangled, knotted rope or a "Syncing..." spinner that looks broken.)
+
+Layout Guidelines:
+- **Alignment:** Center Content.
+- **Visual Hierarchy:**
+  1.  **Title:** Large (60pt), white.
+  2.  **Image:** High-quality 3D or flat illustration showing the disconnect between Server and Client. Use Red/Warning colors for the "break" or "knot".
+  3.  **Key Text:** "Two sources of truth = Two problems" in "Problem Red" (#FB7185).
+- **Background Details:**
+  - Solid Deep Slate (#0F172A).
+Design Style:
+- Background: #0F172A (Deep Slate)
+- Accent: #FB7185 (Problem Red)
+
+Speaker Notes:
+First, let's talk about State. Traditionally, you have your data in the database. Then you fetch it via API into React state. Now you have two copies of the truth. Keeping them in sync is where 50% of our bugs come from.
