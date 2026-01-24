@@ -8,6 +8,13 @@
         @fluxAppearance
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800 antialiased">
+        <flux:header container="header" class="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700">
+            <flux:brand href="#" name="LaraJobs" class="h-10! max-lg:h-14!"/>
+
+            <flux:spacer/>
+
+            <flux:icon.bars-3/>
+        </flux:header>
         {{ $slot }}
 
         @persist('toast')

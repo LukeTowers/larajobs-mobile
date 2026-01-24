@@ -65,13 +65,30 @@ it('creates a job alert', function () {
 it('requires at least one filter for job alert', function () {
     Livewire::test('pages::jobs')
         ->call('createAlert')
-        ->assertHasErrors(['alert']);
+        ->assertHasErrors(['search.query', 'search.location', 'search.salary']);
 });
 
 it('shows the alert modal', function () {
     Livewire::test('pages::jobs')
         ->assertSee('Create Job Alert')
         ->assertSee('Save your current filters to get notified about new jobs.');
+});
+
+it('validates search form inputs when creating alert', function () {
+    Livewire::test('pages::jobs')
+        ->set('search.query', str_repeat('a', 256))
+        ->call('createAlert')
+        ->assertHasErrors(['search.query']);
+
+    Livewire::test('pages::jobs')
+        ->set('search.location', str_repeat('a', 256))
+        ->call('createAlert')
+        ->assertHasErrors(['search.location']);
+
+    Livewire::test('pages::jobs')
+        ->set('search.salary', str_repeat('a', 256))
+        ->call('createAlert')
+        ->assertHasErrors(['search.salary']);
 });
 
 it('loads more jobs', function () {

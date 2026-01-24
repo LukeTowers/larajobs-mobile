@@ -16,16 +16,20 @@ class JobListingFactory extends Factory
      */
     public function definition(): array
     {
+        $knownTitles = ['PHP Developer', 'Laravel Developer', 'Designer', 'Manager', 'Tester'];
+        $locations = ['Remote', 'New York', 'London', 'San Francisco', 'Berlin'];
+        $salaries = ['$50k - $70k', '$80k - $100k', '$100k - $120k', '$120k - $150k', '$150k+'];
+
         return [
-            'title' => $this->faker->jobTitle,
+            'title' => $this->faker->randomElement($knownTitles),
             'link' => $this->faker->url,
             'description' => $this->faker->paragraph,
             'pub_date' => $this->faker->dateTimeBetween('-1 month', 'now'),
-            'location' => $this->faker->city,
-            'salary' => '$' . $this->faker->numberBetween(50, 150) . 'k',
+            'location' => $this->faker->randomElement($locations),
+            'salary' => $this->faker->randomElement($salaries),
             'company' => $this->faker->company,
-            'company_logo' => $this->faker->imageUrl,
-            'tags' => $this->faker->words(3, true),
+            'company_logo' => 'https://avatars.laravel.cloud/'.$this->faker->url,
+            'tags' => implode(',', $this->faker->words(3)),
             'job_type' => 'FULL_TIME',
         ];
     }
