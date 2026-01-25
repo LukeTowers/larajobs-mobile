@@ -1,16 +1,16 @@
 <?php
 
-use Livewire\Component;
 use App\Models\JobListing;
-use App\Models\JobAlert;
-use App\Livewire\Forms\JobSearchForm;
-use Livewire\Attributes\Url;
 use Livewire\Attributes\Validate;
-use Flux\Flux;
+use Livewire\Component;
 
-new class extends Component {
+new class extends Component
+{
+    public string $query = '';
 
-    public JobSearchForm $search;
+    public string $location = '';
+
+    public string $salary = '';
 
     public int $limit = 10;
 
@@ -19,40 +19,25 @@ new class extends Component {
         $this->limit += 10;
     }
 
-    public function createAlert(): void
-    {
-        $this->search->validate();
-
-        JobAlert::create([
-            'query' => $this->search->query,
-            'location' => $this->search->location,
-            'salary' => $this->search->salary,
-        ]);
-
-        Flux::toast('Alert created!', variant: 'success');
-        $this->modal('alert-modal')->close();
-        $this->search->reset();
-    }
-
     public function with(): array
     {
         $query = JobListing::latest('pub_date');
 
-        if ($this->search->query) {
+        if ($this->query) {
             $query->where(function ($q) {
-                $q->where('title', 'like', '%' . $this->search->query . '%')
-                    ->orWhere('description', 'like', '%' . $this->search->query . '%')
-                    ->orWhere('tags', 'like', '%' . $this->search->query . '%')
-                    ->orWhere('company', 'like', '%' . $this->search->query . '%');
+                $q->where('title', 'like', '%'.$this->query.'%')
+                    ->orWhere('description', 'like', '%'.$this->query.'%')
+                    ->orWhere('tags', 'like', '%'.$this->query.'%')
+                    ->orWhere('company', 'like', '%'.$this->query.'%');
             });
         }
 
-        if ($this->search->location) {
-            $query->where('location', 'like', '%' . $this->search->location . '%');
+        if ($this->location) {
+            $query->where('location', 'like', '%'.$this->location.'%');
         }
 
-        if ($this->search->salary) {
-            $query->where('salary', 'like', '%' . $this->search->salary . '%');
+        if ($this->salary) {
+            $query->where('salary', 'like', '%'.$this->salary.'%');
         }
 
         return [
@@ -69,7 +54,7 @@ new class extends Component {
                 <div class="flex gap-2">
                     <div class="flex-1">
                         <flux:input
-                            wire:model.live.debounce.300ms="search.query"
+                            wire:model.live.debounce.300ms="query"
                             icon="magnifying-glass"
                             placeholder="Search keywords..."
                         />
@@ -98,13 +83,13 @@ new class extends Component {
                         style="display: none;"
                     >
                         <flux:input
-                            wire:model.live.debounce.300ms="search.location"
+                            wire:model.live.debounce.300ms="location"
                             label="Location"
                             placeholder="e.g. Remote, USA..."
                             icon="map-pin"
                         />
                         <flux:input
-                            wire:model.live.debounce.300ms="search.salary"
+                            wire:model.live.debounce.300ms="salary"
                             label="Salary"
                             placeholder="e.g. $100k..."
                             icon="currency-dollar"
@@ -198,42 +183,6 @@ new class extends Component {
     </flux:main>
 
     <flux:modal name="alert-modal" class="min-w-[20rem]">
-        <div class="space-y-6">
-            <div>
-                <flux:heading size="lg">Create Job Alert</flux:heading>
-                <flux:subheading>Save your current filters to get notified about new jobs.</flux:subheading>
-            </div>
-
-            <div class="space-y-4">
-                @if($search->query)
-                    <div class="flex flex-col gap-1">
-                        <flux:label>Keywords</flux:label>
-                        <div class="text-sm font-medium">{{ $search->query }}</div>
-                    </div>
-                @endif
-
-                @if($search->location)
-                    <div class="flex flex-col gap-1">
-                        <flux:label>Location</flux:label>
-                        <div class="text-sm font-medium">{{ $search->location }}</div>
-                    </div>
-                @endif
-
-                @if($search->salary)
-                    <div class="flex flex-col gap-1">
-                        <flux:label>Salary</flux:label>
-                        <div class="text-sm font-medium">{{ $search->salary }}</div>
-                    </div>
-                @endif
-            </div>
-
-            <div class="flex gap-2">
-                <flux:spacer/>
-                <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
-                </flux:modal.close>
-                <flux:button variant="primary" wire:click="createAlert">Save Alert</flux:button>
-            </div>
-        </div>
+        <livewire:create-job-alert :$query :$location :$salary />
     </flux:modal>
 </div>
