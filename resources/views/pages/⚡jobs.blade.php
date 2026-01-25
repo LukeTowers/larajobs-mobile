@@ -4,9 +4,12 @@ use App\Models\JobListing;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Livewire\Features\SupportPagination\WithoutUrlPagination;
+use Livewire\WithPagination;
 
-new class extends Component
-{
+new class extends Component {
+    use WithPagination, WithoutUrlPagination;
+
     public string $query = '';
 
     public string $location = '';
@@ -15,34 +18,30 @@ new class extends Component
 
     public int $limit = 10;
 
-    public function loadMore(): void
-    {
-        $this->limit += 10;
-    }
+    public int $page = 1;
 
     #[Computed]
-    public function jobs(): Collection
+    public function jobs()
     {
         $query = JobListing::latest('pub_date');
 
         if ($this->query) {
             $query->where(function ($q) {
-                $q->where('title', 'like', '%'.$this->query.'%')
-                    ->orWhere('description', 'like', '%'.$this->query.'%')
-                    ->orWhere('tags', 'like', '%'.$this->query.'%')
-                    ->orWhere('company', 'like', '%'.$this->query.'%');
+                $q->where('title', 'like', '%' . $this->query . '%')
+                    ->orWhere('description', 'like', '%' . $this->query . '%')
+                    ->orWhere('tags', 'like', '%' . $this->query . '%')
+                    ->orWhere('company', 'like', '%' . $this->query . '%');
             });
         }
 
         if ($this->location) {
-            $query->where('location', 'like', '%'.$this->location.'%');
+            $query->where('location', 'like', '%' . $this->location . '%');
         }
 
         if ($this->salary) {
-            $query->where('salary', 'like', '%'.$this->salary.'%');
+            $query->where('salary', 'like', '%' . $this->salary . '%');
         }
-
-        return $query->take($this->limit)->get();
+        return $query->paginate($this->limit, page: $this->page);
     }
 };
 ?>
@@ -97,9 +96,12 @@ new class extends Component
                     </div>
                 </div>
             </flux:card>
-
             <div class="grid gap-6" wire:transition>
-                @forelse($this->jobs as $job)
+                @if($this->jobs->isEmpty())
+                    <div>No jobs found...</div>
+                @endif
+                @island(name: "job-list", always: true)
+                @foreach($this->jobs as $job)
                     <flux:card class="relative hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                         <div class="flex flex-col gap-4">
                             <div class="flex items-start gap-3 sm:gap-4">
@@ -157,19 +159,18 @@ new class extends Component
                             </flux:text>
                         </div>
 
-                        <a href="{{ $job->link }}" target="_blank" class="absolute inset-0 z-10" aria-label="View {{ $job->title }}"></a>
+                        <a href="{{ $job->link }}" target="_blank" class="absolute inset-0 z-10"
+                           aria-label="View {{ $job->title }}"></a>
                     </flux:card>
-                @empty
-                    <flux:card>
-                        <flux:text>No jobs found.</flux:text>
-                    </flux:card>
-                @endforelse
+                @endforeach
+                @endisland
             </div>
         </div>
 
         @if($this->jobs->isNotEmpty() && $this->jobs->count() >= $limit)
             <div
-                wire:intersect="loadMore"
+                wire:click="$wire.setPage($wire.page++)"
+                wire:island.append="job-list"
                 class="h-10 flex items-center justify-center text-zinc-400"
             >
                 <flux:icon name="arrow-path" class="size-5 animate-spin mr-2"/>
