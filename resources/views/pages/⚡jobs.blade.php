@@ -156,7 +156,7 @@ new class extends Component
                                 {!! strip_tags($job->description) !!}
                             </flux:text>
                         </div>
-                        
+
                         <a href="{{ $job->link }}" target="_blank" class="absolute inset-0 z-10" aria-label="View {{ $job->title }}"></a>
                     </flux:card>
                 @empty
