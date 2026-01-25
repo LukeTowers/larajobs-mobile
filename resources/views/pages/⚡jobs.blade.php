@@ -3,10 +3,10 @@
 use App\Models\JobListing;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-new class extends Component {
+new class extends Component
+{
     public string $query = '';
 
     public string $location = '';
@@ -27,19 +27,19 @@ new class extends Component {
 
         if ($this->query) {
             $query->where(function ($q) {
-                $q->where('title', 'like', '%' . $this->query . '%')
-                    ->orWhere('description', 'like', '%' . $this->query . '%')
-                    ->orWhere('tags', 'like', '%' . $this->query . '%')
-                    ->orWhere('company', 'like', '%' . $this->query . '%');
+                $q->where('title', 'like', '%'.$this->query.'%')
+                    ->orWhere('description', 'like', '%'.$this->query.'%')
+                    ->orWhere('tags', 'like', '%'.$this->query.'%')
+                    ->orWhere('company', 'like', '%'.$this->query.'%');
             });
         }
 
         if ($this->location) {
-            $query->where('location', 'like', '%' . $this->location . '%');
+            $query->where('location', 'like', '%'.$this->location.'%');
         }
 
         if ($this->salary) {
-            $query->where('salary', 'like', '%' . $this->salary . '%');
+            $query->where('salary', 'like', '%'.$this->salary.'%');
         }
 
         return $query->take($this->limit)->get();
@@ -100,7 +100,7 @@ new class extends Component {
 
             <div class="grid gap-6" wire:transition>
                 @forelse($this->jobs as $job)
-                    <flux:card class="hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
+                    <flux:card class="relative hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
                         <div class="flex flex-col gap-4">
                             <div class="flex items-start gap-3 sm:gap-4">
                                 <div
@@ -115,10 +115,7 @@ new class extends Component {
 
                                 <div class="space-y-1 w-full min-w-0">
                                     <flux:heading size="lg" class="wrap-break-word">
-                                        <a href="{{ $job->link }}" target="_blank"
-                                           class="hover:underline decoration-zinc-400 underline-offset-4">
-                                            {{ $job->title }}
-                                        </a>
+                                        {{ $job->title }}
                                     </flux:heading>
 
                                     <div class="text-sm text-zinc-500 dark:text-zinc-400 space-y-1">
@@ -149,18 +146,18 @@ new class extends Component {
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="shrink-0 text-zinc-400">
+                                    <flux:icon name="arrow-top-right-on-square" class="size-5"/>
+                                </div>
                             </div>
 
                             <flux:text class="line-clamp-3 wrap-break-word">
                                 {!! strip_tags($job->description) !!}
                             </flux:text>
-
-                            <div class="shrink-0 w-full">
-                                <flux:button href="{{ $job->link }}" target="_blank" variant="primary" class="w-full">
-                                    Apply Now
-                                </flux:button>
-                            </div>
                         </div>
+                        
+                        <a href="{{ $job->link }}" target="_blank" class="absolute inset-0 z-10" aria-label="View {{ $job->title }}"></a>
                     </flux:card>
                 @empty
                     <flux:card>
