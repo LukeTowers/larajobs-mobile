@@ -43,6 +43,14 @@ new class extends Component {
         }
         return $query->paginate($this->limit, page: $this->page);
     }
+
+    public function updating($property, $value): void
+    {
+        if ($property === 'query' || $property === 'location' || $property === 'salary') {
+            $this->page = 1;
+        }
+    }
+
 };
 ?>
 
@@ -98,7 +106,9 @@ new class extends Component {
             </flux:card>
             <div class="grid gap-6" wire:transition>
                 @if($this->jobs->isEmpty())
-                    <div>No jobs found...</div>
+                    <flux:card class="relative hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors">
+                        <div>No jobs found...</div>
+                    </flux:card>
                 @endif
                 @island(name: "job-list", always: true)
                 @foreach($this->jobs as $job)
@@ -169,12 +179,14 @@ new class extends Component {
 
         @if($this->jobs->isNotEmpty() && $this->jobs->count() >= $limit)
             <div
-                wire:click="$wire.setPage($wire.page++)"
+                wire:intersect="$wire.setPage($wire.page++)"
                 wire:island.append="job-list"
                 class="h-10 flex items-center justify-center text-zinc-400"
             >
-                <flux:icon name="arrow-path" class="size-5 animate-spin mr-2"/>
-                Loading more...
+                <div class="not-in-data-loading:hidden">
+                    <flux:icon name="arrow-path" class="size-5 animate-spin mr-2"/>
+                    Loading more...
+                </div>
             </div>
         @endif
     </flux:main>
