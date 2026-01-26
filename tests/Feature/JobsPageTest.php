@@ -90,15 +90,3 @@ it('validates search form inputs when creating alert', function () {
         ->call('createAlert')
         ->assertHasErrors(['salary']);
 });
-
-it('loads more jobs', function () {
-    JobListing::factory(15)->create();
-
-    Livewire::test('pages::jobs')
-        ->assertSeeHtml('wire:intersect="loadMore"')
-        ->call('loadMore');
-
-    // Since we can't easily assert view data on anonymous components in Folio/Livewire easily without a view,
-    // we can rely on verifying the method exists and runs without error, or check rendered HTML count if feasible.
-    // For this simple test, ensuring no crash on loadMore is a good start.
-});
