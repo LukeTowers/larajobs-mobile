@@ -1,10 +1,7 @@
 <?php
 
 use App\Models\JobListing;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-
-uses(RefreshDatabase::class);
 
 it('displays the jobs page', function () {
     $this->get('/')
