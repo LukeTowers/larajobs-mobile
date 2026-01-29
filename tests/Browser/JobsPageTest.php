@@ -71,7 +71,7 @@ it('loads more jobs when scrolling to the bottom', function () {
     $browser->script('window.scrollTo(0, document.body.scrollHeight)');
 
     // Wait for Page 2 job to appear
-    $browser->assertSee('JOB_PAGE_2', 10);
+    $browser->assertSee('JOB_PAGE_2');
     $browser->assertDontSee('JOB_PAGE_3');
 
     // Scroll to the bottom again to trigger load of Page 3
@@ -79,5 +79,5 @@ it('loads more jobs when scrolling to the bottom', function () {
     $browser->script('window.scrollTo(0, document.body.scrollHeight)');
 
     // Wait for Page 3 job to appear
-    $browser->assertSee('JOB_PAGE_3', 10);
+    $browser->assertSee('JOB_PAGE_3');
 });
